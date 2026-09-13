@@ -2,7 +2,7 @@
 import PieceImage from '../components/PieceImage.astro';
 import PieceCard from '../components/PieceCard.astro';
 import { formatPrice, allPieces, pairedTitle, type Piece } from '../lib/pieces';
-import { SITE, waLink } from '../config';
+import { SITE, hasWhatsApp, waLink } from '../config';
 import type { Lang } from '../i18n/ui';
 import { useTranslations, localePath, pick } from '../i18n/utils';
 
@@ -24,7 +24,6 @@ const care = pick(lang, d.care, d.careZh);
 const price = formatPrice(d.price, d.currency);
 
 const isSold = d.status === 'sold';
-const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 const enquiry =

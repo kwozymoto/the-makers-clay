@@ -1,6 +1,6 @@
 ---
 import Wordmark from './Wordmark.astro';
-import { SITE, waLink } from '../config';
+import { SITE, hasWhatsApp, waLink } from '../config';
 import type { Lang } from '../i18n/ui';
 import { useTranslations, localePath } from '../i18n/utils';
 
@@ -13,7 +13,6 @@ const t = useTranslations(lang);
 const p = (path: string) => localePath(lang, path);
 const year = new Date().getFullYear();
 
-const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
 const hello =
   lang === 'zh'
     ? '你好!我在网站上看到你的作品 —— '

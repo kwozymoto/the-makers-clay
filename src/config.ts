@@ -1,33 +1,34 @@
+import settings from './data/site.json';
+
 /**
- * Everything you'll want to change lives in this one file.
+ * Fixed brand strings live here; everything Lydia can change from Pages CMS
+ * lives in src/data/site.json and is merged in below. Editing that JSON in the
+ * CMS is the same as editing this file, without touching code.
  */
 export const SITE = {
   name: 'The Makers Clay',
   nameZh: '手作陶',
-  tagline: 'Made to be used & loved.',
-  taglineZh: '为日常而做,值得被爱。',
-  instagram: 'https://www.instagram.com/themakersclay.lydia',
-  instagramHandle: '@themakersclay.lydia',
 
-  // TODO: put the real WhatsApp number here, international format, digits only.
-  // e.g. Malaysian 012-345 6789 becomes '60123456789'
-  whatsapp: '60000000000',
+  /** Number in international format, digits only — '60123456789'. */
+  whatsapp: settings.whatsapp,
 
-  // TODO: optional. Paste a form endpoint from MailerLite / Buttondown / Formspree
-  // to turn on the drop waitlist. Leave empty and the site shows an Instagram
-  // follow prompt instead, so nothing looks broken.
-  waitlistEndpoint: '',
+  instagram: settings.instagram,
+  instagramHandle: settings.instagramHandle,
+  email: settings.email,
 
-  email: '',
-  location: 'Malaysia',
+  /** MailerLite / Buttondown / Formspree endpoint. Empty hides the form. */
+  waitlistEndpoint: settings.waitlistEndpoint,
 
   /**
    * While true the site shows a "work in progress" bar and asks search engines
-   * not to index it (noindex header + a robots.txt that disallows everything).
-   * Set to false when the real prices and photos are in and you want it found.
+   * not to index it (noindex + a robots.txt that disallows everything).
+   * Turn it off in the CMS under Site settings when you are ready to be found.
    */
-  preview: true,
-} as const;
+  preview: settings.preview,
+};
+
+/** True once a real number is set, so enquiry buttons can fall back to DMs. */
+export const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
 
 /** Build a wa.me link with the message already typed out for the customer. */
 export function waLink(message: string): string {

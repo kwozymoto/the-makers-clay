@@ -31,9 +31,16 @@ const assets = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/pieces/**/*.{jpeg,jpg,png,webp,avif}'
 );
 
+/**
+ * Accepts whatever shape the value arrives in — a bare filename written by
+ * hand, or a path like '/cat-friends-1.jpg' written by Pages CMS — and looks
+ * it up by filename alone.
+ */
 export async function resolveImage(name?: string): Promise<ImageMetadata | null> {
   if (!name) return null;
-  const loader = assets['/src/assets/pieces/' + name];
+  const file = name.split('/').pop();
+  if (!file) return null;
+  const loader = assets['/src/assets/pieces/' + file];
   if (!loader) return null;
   return (await loader()).default;
 }

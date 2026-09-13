@@ -12,6 +12,42 @@ WhatsApp and Instagram. Checkout is deliberately **not** built yet; see
 
 ---
 
+## Editing without touching code
+
+The site is wired up to [Pages CMS](https://pagescms.org), so content can be
+edited in a browser at [app.pagescms.org](https://app.pagescms.org) — sign in
+with GitHub, pick the repo, edit a form, hit Save. That commits to `main` and
+the Pages workflow rebuilds. No server, no database, no extra cost, and every
+change is a commit, so nothing is unrecoverable.
+
+`.pages.yml` defines the editing interface. Three things are editable:
+
+| In the CMS | Writes to |
+| --- | --- |
+| **Pieces** | `src/content/pieces/*.md` |
+| **About page** | `src/data/about.json` |
+| **Site settings** | `src/data/site.json` (WhatsApp, socials, preview toggle) |
+
+**[docs/EDITING.md](docs/EDITING.md) is the guide for whoever is editing** —
+written for a non-developer, not for you. If you change `.pages.yml`, change
+that too.
+
+Two things to know if you edit `.pages.yml`:
+
+- **`media.output` is `/`**, so the CMS writes image values as `/photo.jpg`
+  while hand-written entries use bare filenames. `resolveImage()` matches on
+  the filename alone, so both work.
+- **The content schema tolerates CMS output** — `''` for a cleared number,
+  `null` for an empty text box, a bare string where a list is expected. See the
+  preprocessors at the top of `src/content.config.ts`. Removing them will make
+  the build fail the first time someone clears a field.
+
+The URL of a piece comes from its **filename**, which the CMS generates by
+slugifying the English name. Renaming a piece in the CMS does not move the
+file, so the old URL sticks — rename the file directly if that matters.
+
+---
+
 ## Everyday tasks
 
 ### Run it locally

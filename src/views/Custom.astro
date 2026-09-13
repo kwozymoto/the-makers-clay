@@ -1,6 +1,6 @@
 ---
 import Waitlist from '../components/Waitlist.astro';
-import { SITE, waLink } from '../config';
+import { SITE, hasWhatsApp, waLink } from '../config';
 import type { Lang } from '../i18n/ui';
 import { useTranslations } from '../i18n/utils';
 
@@ -11,7 +11,6 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
 const opener =
   lang === 'zh'
     ? '你好!我想订制一件作品,大概是这样的:'
