@@ -12,9 +12,11 @@ interface Props {
   lang: Lang;
   title: string;
   description?: string;
+  /** Force noindex on a page that should stay out of search even after launch. */
+  noindex?: boolean;
 }
 
-const { lang, title, description = '' } = Astro.props;
+const { lang, title, description = '', noindex = false } = Astro.props;
 
 const htmlLang = lang === 'zh' ? 'zh-Hans' : 'en';
 const siteName = lang === 'zh' ? SITE.nameZh + ' The Makers Clay' : SITE.name;
@@ -38,7 +40,7 @@ const zhHref = new URL(lang === 'zh' ? Astro.url.pathname : altPath, Astro.site 
     <title>{fullTitle}</title>
     {description && <meta name="description" content={description} />}
     <link rel="icon" type="image/svg+xml" href={faviconHref} />
-    {SITE.preview && <meta name="robots" content="noindex, nofollow" />}
+    {(SITE.preview || noindex) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" hreflang="en" href={enHref.href} />
     <link rel="alternate" hreflang="zh-Hans" href={zhHref.href} />

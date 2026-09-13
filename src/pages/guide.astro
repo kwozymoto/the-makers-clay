@@ -1,0 +1,365 @@
+---
+import Base from '../layouts/Base.astro';
+
+/*
+ * The editing guide, served from the site itself so the link can be sent to
+ * anyone — no account, no org, no login. Deliberately not in the navigation,
+ * and noindex even after the site launches, so it never turns up in search
+ * results next to the shop.
+ */
+const lang = 'en' as const;
+
+const jobs = [
+  {
+    title: 'Something sold',
+    action: 'Is it available? → Sold',
+    body: 'Leave it on the site. A sold piece still shows people what you make, and its page invites them to ask about something similar.',
+  },
+  {
+    title: 'Out of stock, but you can make another',
+    action: 'Is it available? → Out of stock',
+    body: 'It stays listed and says "Made to order".',
+  },
+  {
+    title: 'Change a price',
+    action: 'Price → the new number',
+    body: 'Empty means the page shows "Price on enquiry" instead.',
+  },
+  {
+    title: 'Put something on the front page',
+    action: 'Show on the home page → on',
+    body: 'Three or four pieces there is about right.',
+  },
+];
+
+const signIn = [
+  { lead: 'Go to <a href="https://app.pagescms.org" rel="noopener" target="_blank">app.pagescms.org</a>' },
+  { lead: 'Click <strong>Sign in with GitHub</strong> and allow it access' },
+  { lead: 'Pick <strong>the-makers-clay</strong> from your list of projects', note: 'Bookmark the page once you are in.' },
+];
+
+const adding = [
+  {
+    lead: '<strong>Photos</strong> — upload them',
+    note: 'The first one is what people see in the shop, so put the best one first. Upright photos suit the layout better than wide ones. Upload the full-size photo; the site shrinks it for you.',
+  },
+  {
+    lead: '<strong>Name (English)</strong>',
+    note: 'Keep it short — this also becomes the web address.',
+  },
+  {
+    lead: '<strong>Price</strong> — just the number',
+    note: 'No RM, no decimals needed. Leave it empty for "Price on enquiry".',
+  },
+  {
+    lead: '<strong>Is it available?</strong> and <strong>Is there only one?</strong>',
+    note: 'The second decides whether the piece shows as "One of a kind" or "Made in batches".',
+  },
+  {
+    lead: '<strong>Save</strong>',
+    note: 'That is enough for a piece to go live. Description, size and care sit below and can wait.',
+  },
+];
+
+const notes = [
+  {
+    title: 'Nothing you do is permanent',
+    body: 'Every change is saved with a full history. If you delete something by accident or change your mind, it can be brought back exactly as it was. Do not be afraid of the Save button.',
+  },
+  {
+    title: 'Photos do most of the selling',
+    body: 'The site can make a decent photo look good, but it cannot rescue a dark one. Natural light near a window, a plain background, and the piece filling most of the frame.',
+  },
+  {
+    title: 'Two languages, one piece',
+    body: 'You never create a piece twice. Each one has English fields, then all the Chinese fields together below them. Fill in as much as you want — anything left blank falls back to English.',
+  },
+];
+---
+
+<Base
+  lang={lang}
+  title="Editing guide"
+  description="How to add pieces, mark things sold and update the site."
+  noindex
+>
+  <article class="guide">
+    <section class="section section--tight">
+      <div class="wrap wrap--narrow">
+        <p class="eyebrow">Editing guide</p>
+        <h1>Updating the website</h1>
+        <p class="lede">
+          You do not need to touch any code. Everything is edited through a
+          website called Pages CMS, which saves your changes and updates the
+          site for you.
+        </p>
+        <p class="lede">
+          You will need the GitHub account the site lives under, and a browser.
+          It works on a phone, which is the easy way to add photos.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <h2>Signing in, the first time</h2>
+        <p class="muted intro">Once only — after this it is just sign in and go.</p>
+        <ol class="steps">
+          {
+            signIn.map((s) => (
+              <li>
+                <p class="lead" set:html={s.lead} />
+                {s.note && <p class="muted">{s.note}</p>}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <h2>The things you will do most often</h2>
+        <p class="muted intro">
+          Each of these is one field and a Save. Open <strong>Pieces</strong>,
+          click the piece you mean, change the one thing, save.
+        </p>
+        <ul class="jobs">
+          {
+            jobs.map((j) => (
+              <li class="job">
+                <h3>{j.title}</h3>
+                <p class="do">{j.action}</p>
+                <p class="muted">{j.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <h2>Adding a new piece</h2>
+        <p class="muted intro">
+          Click <strong>Pieces</strong>, then <strong>Add an entry</strong>.
+        </p>
+        <ol class="steps">
+          {
+            adding.map((s) => (
+              <li>
+                <p class="lead" set:html={s.lead} />
+                <p class="muted">{s.note}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="note">
+          <h3>The Chinese fields are all together at the bottom</h3>
+          <p class="muted">
+            English first, then every Chinese field as one block — so you can do
+            the whole English pass, then decide whether to do the Chinese one.
+            Anything left blank falls back to English.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <div class="timing">
+          <span class="timing__big" aria-hidden="true">1 min</span>
+          <div>
+            <h2>When will I see my changes?</h2>
+            <p class="muted">
+              When you hit Save, the site rebuilds itself in the background.
+              There is no progress bar, so it will look like nothing happened.
+            </p>
+            <ul class="muted">
+              <li>Save once. Do not keep clicking it.</li>
+              <li>Wait about a minute, then refresh the site.</li>
+              <li>Still old? Refresh again — your browser may be showing a saved copy.</li>
+              <li>
+                Still nothing after a few minutes? Click
+                <strong>Rebuild the site</strong> in the sidebar and give it
+                another minute.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <h2>The About page and Site settings</h2>
+        <p class="muted intro">
+          <strong>About page</strong> has an English section and a Chinese one,
+          each with a heading and a list of paragraphs. Add or remove paragraphs
+          with the buttons beside them.
+        </p>
+        <dl class="settings">
+          <div>
+            <dt>Hide the site from Google</dt>
+            <dd class="muted">
+              Under <strong>Site settings</strong>. Leave this on while the site
+              is still a work in progress — it shows a "work in progress" bar
+              and keeps the site out of search results. Turn it off when you are
+              ready to be found. This is the switch that launches the site.
+            </dd>
+          </div>
+          <div>
+            <dt>WhatsApp number</dt>
+            <dd class="muted">
+              Country code first, digits only — no plus sign, no spaces, no
+              dashes. Until this is filled in, the enquiry buttons send people
+              to Instagram instead.
+              <span class="example">012-345 6789 &nbsp;→&nbsp; 60123456789</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section section--tight bordered">
+      <div class="wrap wrap--narrow">
+        <h2>Worth knowing</h2>
+        {
+          notes.map((n) => (
+            <div class="note">
+              <h3>{n.title}</h3>
+              <p class="muted">{n.body}</p>
+            </div>
+          ))
+        }
+        <p class="closing muted">
+          <strong>If something looks broken, do not panic</strong> — nothing
+          here can be permanently damaged. Take a screenshot of what you are
+          seeing, note what you had just done, and send it on. The history makes
+          it straightforward to work out what happened and undo it.
+        </p>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .guide h1 { margin-bottom: 0.3em; }
+  .guide .lede + .lede { margin-top: 1em; }
+
+  .bordered { border-top: 1px solid var(--line); }
+
+  .intro { margin-bottom: 1.5rem; max-width: 60ch; }
+
+  /* Numbered because these genuinely are sequences. */
+  ol.steps {
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+
+  ol.steps > li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.2rem 0.9rem;
+    align-items: start;
+  }
+
+  /* Every paragraph stays in the text column — otherwise the second one
+     wraps onto a new row under the number and each word gets its own line. */
+  ol.steps > li > p { grid-column: 2; margin: 0; }
+
+  ol.steps > li::before {
+    content: counter(step);
+    font-family: 'Shantell Mark', var(--font-body);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--clay);
+    line-height: 1.45;
+    text-align: center;
+  }
+
+  .lead { color: var(--ink); }
+
+  /* A lookup list, not a sequence — so no numbers. */
+  .jobs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 0.85rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .job {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .job h3 { font-size: 1rem; margin: 0; font-family: var(--font-body); font-weight: 700; }
+  .job p { margin: 0; font-size: 0.93rem; }
+  .job .do { color: var(--clay-deep); font-weight: 600; }
+
+  .timing {
+    background: var(--clay-soft);
+    border-radius: var(--r-md);
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    display: flex;
+    gap: 1.25rem;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .timing__big {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 7vw, 2.9rem);
+    line-height: 0.9;
+    color: var(--clay-deep);
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+  }
+
+  .timing > div { flex: 1 1 16rem; }
+  .timing h2 { font-size: clamp(1.25rem, 3vw, 1.6rem); margin-bottom: 0.3em; }
+  .timing ul { margin: 0; padding-left: 1.1rem; font-size: 0.95rem; }
+  .timing li { margin-bottom: 0.25em; }
+
+  .note {
+    background: var(--sage-soft);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+  }
+
+  .note h3 { font-size: 0.98rem; font-family: var(--font-body); font-weight: 700; margin-bottom: 0.25em; }
+  .note p { margin: 0; font-size: 0.95rem; }
+
+  .settings { margin: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+  .settings dt { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .settings dd { margin: 0; font-size: 0.95rem; }
+
+  .example {
+    display: inline-block;
+    margin-top: 0.45rem;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.88rem;
+    color: var(--ink);
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 0.45rem 0.7rem;
+  }
+
+  .closing { margin-top: 1.75rem; font-size: 0.95rem; }
+</style>

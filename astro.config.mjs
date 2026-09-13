@@ -23,6 +23,9 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      // The editing guide is a private link, not part of the shop. It also
+      // carries noindex, and listing it here would contradict that.
+      filter: (page) => !/\/guide\/?$/.test(page),
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', zh: 'zh-Hans' },
