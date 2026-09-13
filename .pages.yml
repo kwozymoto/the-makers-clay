@@ -1,8 +1,12 @@
 # Pages CMS — the editing interface at app.pagescms.org
 #
-# Labels here are what Lydia sees, so they are written as plain questions
-# rather than as field names. Order follows how a piece actually gets added:
-# photos first, then what it is called, then the price.
+# This file *is* the editing experience. Labels are written as plain questions
+# rather than field names, and every field carries a description, because the
+# hosted editor gives no other place to explain anything.
+#
+# Field order matters: photos first (that is how a piece actually gets added),
+# then all the English fields, then all the Chinese ones together — so the
+# Chinese pass can be done in one go, or skipped.
 #
 # Docs: https://pagescms.org/docs
 
@@ -22,9 +26,9 @@ content:
     format: yaml-frontmatter
     filename: '{fields.title}.md'
     view:
-      fields: [title, status, price, kind]
+      fields: [title, status, kind, price]
       primary: title
-      sort: [order, title, status]
+      sort: [order, title, status, price]
       default:
         sort: order
         order: desc
@@ -32,9 +36,12 @@ content:
       - name: images
         label: Photos
         type: image
+        required: true
         description: >-
-          The first photo is the one shown in the shop. Upright photos look
-          best. Upload the full-size photo — the site shrinks it for you.
+          The first photo is the one people see in the shop, so put your best
+          one first — you can drag them into a different order after uploading.
+          Upright photos fit the layout better than wide ones. Upload the
+          full-size photo; the site makes the smaller versions itself.
         options:
           multiple: true
 
@@ -42,30 +49,37 @@ content:
         label: Name (English)
         type: string
         required: true
-        description: This also becomes the web address, so keep it short.
-
-      - name: titleZh
-        label: 中文名称 · Name (Chinese)
-        type: string
-        description: Optional. If empty, the English name is used on both.
+        description: >-
+          Short is better. This also becomes the web address, so "Night Flower
+          Mini Cup" lives at /shop/night-flower-mini-cup.
 
       - name: price
         label: Price (RM)
         type: number
-        description: Leave empty to show "Price on enquiry" instead of a number.
+        description: >-
+          Just the number — no RM, no decimals. Leave it empty and the page
+          says "Price on enquiry" instead, which suits one-off pieces you would
+          rather talk about than list.
 
       - name: status
         label: Is it available?
         type: select
+        description: >-
+          Mark pieces Sold rather than deleting them. A sold piece still shows
+          people what you make, and its page invites them to ask about
+          something similar.
         options:
           values:
             - { name: available, label: Available — someone can buy it }
             - { name: sold, label: Sold — keep it listed, marked sold }
-            - { name: 'made-to-order', label: Out of stock — can make another }
+            - { name: 'made-to-order', label: Out of stock — but I can make another }
 
       - name: kind
         label: Is there only one?
         type: select
+        description: >-
+          This sets the label on the piece — "One of a kind" or "Made in
+          batches". It is the main thing that tells someone whether to hurry.
         options:
           values:
             - { name: unique, label: One of a kind — when it goes, it is gone }
@@ -74,44 +88,66 @@ content:
       - name: description
         label: Description (English)
         type: text
+        description: >-
+          Two or three sentences. What it is like to use, or something about
+          making it — that is what people remember. No need to put the size
+          here, it has its own field.
+
+      - name: dimensions
+        label: Size (English)
+        type: string
+        description: 'For example: Approx. 300 ml · 9 cm tall. For dishes, the width across.'
+
+      - name: care
+        label: Care (English)
+        type: string
+        description: >-
+          For example: Dishwasher and microwave safe. Or: Food safe, hand wash
+          recommended.
+
+      - name: titleZh
+        label: 中文名称 · Name (Chinese)
+        type: string
+        description: >-
+          中文 — everything from here down is the Chinese version of the page.
+          Leave any of it blank and the English is shown instead, so you can
+          come back to this later, or skip it entirely.
 
       - name: descriptionZh
         label: 中文说明 · Description (Chinese)
         type: text
 
-      - name: dimensions
-        label: Size (English)
-        type: string
-        description: 'For example: Approx. 300 ml · 9 cm tall'
-
       - name: dimensionsZh
         label: 尺寸 · Size (Chinese)
         type: string
-
-      - name: care
-        label: Care (English)
-        type: string
-        description: 'For example: Dishwasher and microwave safe.'
+        description: 'For example: 约 300 毫升 · 9 公分高'
 
       - name: careZh
         label: 保养 · Care (Chinese)
         type: string
+        description: 'For example: 可用洗碗机与微波炉。'
 
       - name: featured
         label: Show on the home page
         type: boolean
+        description: >-
+          Three or four pieces on the home page works well. More than that and
+          the page gets long before anyone reaches the shop.
 
       - name: order
         label: Position in the shop
         type: number
         description: >-
-          Higher numbers appear first. Leave at 0 unless you want to push
-          something to the top.
+          Leave at 0 for most pieces. Give one a higher number — say 100 — to
+          pin it to the top of the shop. Sold pieces always sink to the bottom
+          whatever you put here.
 
       - name: batch
-        label: Batch
+        label: Batch note
         type: string
-        description: Optional note to yourself, e.g. 2026-02. Not shown on the site.
+        description: >-
+          A private note to yourself, like 2026-02, for keeping track of which
+          firing a piece came from. Never shown on the site.
 
   - name: about
     label: About page
@@ -122,6 +158,10 @@ content:
       - name: en
         label: English
         type: object
+        description: >-
+          This is the page people read before deciding to buy from someone they
+          have never met, so it is worth sounding like you rather than like a
+          shop.
         fields:
           - name: heading
             label: Heading
@@ -130,9 +170,17 @@ content:
             label: Paragraphs
             type: text
             list: true
+            description: >-
+              One box per paragraph. Use the buttons beside them to add, remove
+              or reorder. Three or four short paragraphs reads better than one
+              long one.
+
       - name: zh
-        label: 中文
+        label: 中文 · Chinese
         type: object
+        description: >-
+          The Chinese version of the same page. It is shown to anyone reading
+          the site in 中文.
         fields:
           - name: heading
             label: 标题 · Heading
@@ -153,39 +201,52 @@ content:
         type: boolean
         description: >-
           Leave this ON while the site is still a work in progress. It shows a
-          "work in progress" bar and keeps the site out of search results.
-          Turn it OFF when you are ready to be found.
+          "work in progress" bar across the top and keeps the site out of
+          search results. Turn it OFF when the photos and prices are real and
+          you want to be found. This is the switch that launches the site.
 
       - name: whatsapp
         label: WhatsApp number
         type: string
         description: >-
-          Country code first, digits only, no + or spaces. A Malaysian
-          012-345 6789 becomes 60123456789. Until this is set, the enquiry
-          buttons send people to Instagram instead.
+          Country code first, digits only — no plus sign, no spaces, no dashes.
+          A Malaysian 012-345 6789 becomes 60123456789. Until this is filled
+          in, every enquiry button sends people to Instagram instead.
         pattern: '^[0-9]{8,15}$'
 
       - name: instagram
         label: Instagram page link
         type: string
+        description: The full address, starting with https://
 
       - name: instagramHandle
         label: Instagram name
         type: string
-        description: Shown in the footer, e.g. @themakersclay.lydia
+        description: Shown in the footer, including the @ — for example @themakersclay.lydia
 
       - name: email
         label: Email address
         type: string
-        description: Optional. Shown in the footer if filled in.
+        description: Optional. Shown in the footer only if you fill it in.
 
       - name: waitlistEndpoint
         label: Mailing list form address
         type: string
         description: >-
-          Advanced. Paste the form address from MailerLite or Buttondown to
-          turn on the "tell me about the next batch" sign-up. Leave empty and
-          it shows a Follow on Instagram button instead.
+          Advanced, and safe to ignore. Paste the form address from a mailing
+          list service (MailerLite, Buttondown) to switch on the "tell me about
+          the next batch" sign-up. Left empty, the site shows a Follow on
+          Instagram button there instead.
+
+# A button in the CMS sidebar that re-runs the deploy. Useful if a save did not
+# seem to take, or a build failed for a transient reason — it means a retry
+# does not need a developer.
+actions:
+  - name: rebuild
+    label: Rebuild the site
+    workflow: deploy-pages.yml
+    ref: current
+    cancelable: false
 
 settings:
   content:

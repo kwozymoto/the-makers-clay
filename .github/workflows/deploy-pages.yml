@@ -4,6 +4,14 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      # Pages CMS sends this with its "Rebuild the site" button. GitHub
+      # rejects a dispatch carrying inputs the workflow does not declare, so
+      # it has to be accepted here even though the build ignores it.
+      payload:
+        description: 'Sent by Pages CMS. Not used by this workflow.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
