@@ -126,8 +126,11 @@ name shows.
 - [ ] Check every price and description in `src/content/pieces/` (the piece
       *names* came from the Instagram posts, but prices, sizes and descriptions
       are all invented placeholders)
-- [ ] Set `site:` in `astro.config.mjs` to the real domain
-- [ ] Update the `Sitemap:` line in `public/robots.txt` to match
+- [ ] Set the `PUBLIC_SITE_URL` default in `astro.config.mjs` to the real domain
+- [ ] **Set `preview: false` in `src/config.ts`** — this drops the "work in
+      progress" bar, removes `noindex`, and switches `robots.txt` from
+      disallow-everything to allow-everything. Until you do, the site is
+      deliberately invisible to search engines.
 - [ ] Set up a waitlist endpoint — this is the single highest-value thing on the
       site, because small batches sell out before the algorithm shows the post
 
@@ -151,6 +154,34 @@ product grid. For the real site you want a plain photo of the piece, with the
 words as text on the page where they can be read, translated and searched.
 
 Filenames map to pieces, so replacing one is just overwriting the file.
+
+---
+
+## Where it's deployed
+
+Currently on **GitHub Pages** at
+<https://kwozymoto.github.io/the-makers-clay/>, built by
+`.github/workflows/deploy-pages.yml` on every push to `main`.
+
+The repo is public because GitHub Pages only serves private repos on a paid
+plan. To keep a work-in-progress site out of search results, `SITE.preview`
+emits `noindex` and a `robots.txt` that disallows everything — see the checklist
+above.
+
+**The site is path-portable.** `PUBLIC_SITE_URL` and `PUBLIC_BASE_PATH` are read
+at build time, and every internal link goes through a base-aware `localePath()`,
+so the same code works at a subpath (`/the-makers-clay/`) and at a root domain.
+The Pages workflow feeds those from the Pages config, so moving to a custom
+domain or a different repo owner needs no code changes.
+
+To build a subpath version locally:
+
+```bash
+PUBLIC_SITE_URL=https://kwozymoto.github.io PUBLIC_BASE_PATH=/the-makers-clay npm run build
+```
+
+(On Git Bash for Windows, prefix that with `MSYS_NO_PATHCONV=1` or the shell
+rewrites `/the-makers-clay` into a Windows path.)
 
 ---
 
