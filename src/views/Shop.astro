@@ -1,0 +1,123 @@
+---
+import PieceCard from '../components/PieceCard.astro';
+import Waitlist from '../components/Waitlist.astro';
+import { allPieces } from '../lib/pieces';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const pieces = await allPieces();
+const hasUnique = pieces.some((x) => x.data.kind === 'unique');
+const hasBatch = pieces.some((x) => x.data.kind === 'batch');
+const showFilters = hasUnique && hasBatch;
+
+const filters = [
+  { value: 'all', label: t('shop.filter.all') },
+  { value: 'unique', label: t('shop.filter.unique') },
+  { value: 'batch', label: t('shop.filter.batch') },
+];
+---
+
+<section class="section section--tight">
+  <div class="wrap">
+    <h1>{t('shop.title')}</h1>
+    <p class="lede">{t('shop.lede')}</p>
+
+    {
+      showFilters && (
+        <div class="filters" role="group" aria-label={t('shop.title')}>
+          {filters.map((f) => (
+            <button
+              type="button"
+              class="chip"
+              data-filter={f.value}
+              aria-pressed={f.value === 'all' ? 'true' : 'false'}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    {
+      pieces.length === 0 ? (
+        <p class="empty muted">{t('shop.empty')}</p>
+      ) : (
+        <ul class="grid" data-grid>
+          {pieces.map((piece, i) => (
+            <PieceCard piece={piece} lang={lang} eager={i < 4} />
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<Waitlist lang={lang} />
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+
+  if (grid) {
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = button.dataset.filter ?? 'all';
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+
+        grid.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+          card.hidden = value !== 'all' && card.dataset.kind !== value;
+        });
+      });
+    });
+  }
+</script>
+
+<style>
+  h1 { margin-bottom: 0.25em; }
+
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .chip {
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chip:hover { border-color: var(--clay); color: var(--ink); }
+
+  .chip[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+
+  .empty {
+    padding: clamp(2rem, 6vw, 4rem) 0;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+</style>

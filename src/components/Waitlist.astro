@@ -1,0 +1,118 @@
+---
+import { SITE } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const endpoint = SITE.waitlistEndpoint;
+---
+
+<section class="waitlist">
+  <div class="wrap inner">
+    <div class="copy">
+      <h2>{t('waitlist.title')}</h2>
+      <p class="muted">{endpoint ? t('waitlist.body') : t('waitlist.fallback')}</p>
+    </div>
+
+    {
+      endpoint ? (
+        <form class="form" method="POST" action={endpoint} data-waitlist>
+          <label class="visually-hidden" for="waitlist-email">
+            {t('waitlist.placeholder')}
+          </label>
+          <input
+            id="waitlist-email"
+            type="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder={t('waitlist.placeholder')}
+          />
+          <button class="btn btn--primary" type="submit">{t('waitlist.button')}</button>
+          <p class="done" data-done hidden>{t('waitlist.thanks')}</p>
+        </form>
+      ) : (
+        <a class="btn btn--primary" href={SITE.instagram} rel="noopener" target="_blank">
+          {t('waitlist.follow')}
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-waitlist]').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const button = form.querySelector('button');
+      const done = form.querySelector<HTMLElement>('[data-done]');
+      if (button) button.disabled = true;
+
+      try {
+        await fetch(form.action, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+        form.querySelector('input')?.remove();
+        button?.remove();
+        if (done) done.hidden = false;
+      } catch {
+        // Network hiccup — let the browser do a normal form post instead.
+        if (button) button.disabled = false;
+        form.submit();
+      }
+    });
+  });
+</script>
+
+<style>
+  .waitlist {
+    background: var(--paper-2);
+    border-block: 1px solid var(--line);
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .copy { max-width: 46ch; }
+  .copy h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+  .copy p { margin: 0; }
+
+  .form {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  input[type='email'] {
+    font: inherit;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--card);
+    color: var(--ink);
+    min-width: min(260px, 70vw);
+  }
+
+  input[type='email']::placeholder { color: var(--ink-faint); }
+  input[type='email']:focus { border-color: var(--clay); outline: none; box-shadow: 0 0 0 3px var(--clay-soft); }
+
+  .done {
+    margin: 0;
+    font-weight: 600;
+    color: var(--clay-deep);
+  }
+</style>

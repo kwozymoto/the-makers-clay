@@ -1,0 +1,100 @@
+---
+import Wordmark from './Wordmark.astro';
+import { SITE, waLink } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (path: string) => localePath(lang, path);
+const year = new Date().getFullYear();
+
+const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
+const hello =
+  lang === 'zh'
+    ? '你好!我在网站上看到你的作品 —— '
+    : 'Hi! I saw your pieces on the website — ';
+---
+
+<footer class="site-footer">
+  <div class="wrap cols">
+    <div class="col col--brand">
+      <Wordmark size="lg" byline as="p" />
+      <p class="muted small">
+        {t('footer.madeIn')} · {lang === 'zh' ? '小批量制作' : 'small batch'}
+      </p>
+    </div>
+
+    <nav class="col" aria-label={lang === 'zh' ? '页脚导航' : 'Footer'}>
+      <a href={p('/shop')}>{t('nav.shop')}</a>
+      <a href={p('/custom')}>{t('nav.custom')}</a>
+      <a href={p('/about')}>{t('nav.about')}</a>
+    </nav>
+
+    <div class="col">
+      <p class="label">{t('footer.enquiries')}</p>
+      <a href={SITE.instagram} rel="me noopener" target="_blank">{SITE.instagramHandle}</a>
+      {hasWhatsApp && <a href={waLink(hello)} rel="noopener" target="_blank">WhatsApp</a>}
+      {SITE.email && <a href={'mailto:' + SITE.email}>{SITE.email}</a>}
+    </div>
+  </div>
+
+  <div class="wrap base">
+    <p class="muted small">© {year} The Makers Clay. {t('footer.rights')}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: clamp(3rem, 8vw, 6rem);
+    border-top: 1px solid var(--line);
+    background: var(--paper-2);
+    padding-block: clamp(2.5rem, 5vw, 3.5rem) 1.5rem;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .col a {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    width: fit-content;
+    border-bottom: 1px solid transparent;
+  }
+
+  .col a:hover { color: var(--ink); border-color: var(--clay); }
+
+  .col--brand { gap: 1.1rem; }
+
+  .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin: 0 0 0.2rem;
+  }
+
+  .small { font-size: 0.84rem; margin: 0; }
+
+  .base {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import About from '../../views/About.astro';
+import { useTranslations } from '../../i18n/utils';
+const lang = 'zh' as const;
+const t = useTranslations(lang);
+---
+
+<Base
+  lang={lang}
+  title={t('about.title')}
+  description="马来西亚的小型陶艺工作室,手拉坯、手绘,小批量制作日常器皿。"
+>
+  <About lang={lang} />
+</Base>

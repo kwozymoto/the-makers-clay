@@ -1,0 +1,278 @@
+---
+import PieceImage from '../components/PieceImage.astro';
+import PieceCard from '../components/PieceCard.astro';
+import { formatPrice, allPieces, pairedTitle, type Piece } from '../lib/pieces';
+import { SITE, waLink } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath, pick } from '../i18n/utils';
+
+interface Props {
+  piece: Piece;
+  lang: Lang;
+}
+
+const { piece, lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (path: string) => localePath(lang, path);
+const d = piece.data;
+
+const title = pick(lang, d.title, d.titleZh);
+const { primary, secondary, secondaryIsLatin } = pairedTitle(lang, d);
+const description = pick(lang, d.description, d.descriptionZh);
+const dimensions = pick(lang, d.dimensions, d.dimensionsZh);
+const care = pick(lang, d.care, d.careZh);
+const price = formatPrice(d.price, d.currency);
+
+const isSold = d.status === 'sold';
+const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const enquiry =
+  lang === 'zh'
+    ? `你好!我想问一下「${title}」这件作品。\n${pageUrl}`
+    : `Hi! I'd like to ask about "${title}".\n${pageUrl}`;
+const similar =
+  lang === 'zh'
+    ? `你好!「${title}」已经售出了 —— 下一批会有类似的吗?\n${pageUrl}`
+    : `Hi! "${title}" is sold — will something similar come up in the next batch?\n${pageUrl}`;
+
+const enquiryText = isSold ? similar : enquiry;
+const ctaLabel = isSold
+  ? t('piece.askSimilar')
+  : hasWhatsApp
+    ? t('piece.enquire')
+    : t('piece.enquireIg');
+
+const related = (await allPieces())
+  .filter((x) => x.id !== piece.id && x.data.status !== 'sold')
+  .slice(0, 3);
+
+const statusLabel =
+  d.status === 'sold'
+    ? t('piece.sold')
+    : d.status === 'made-to-order'
+      ? t('piece.madeToOrder')
+      : t('piece.available');
+---
+
+<article class="section section--tight">
+  <div class="wrap">
+    <a class="back" href={p('/shop')}>&larr; {t('piece.back')}</a>
+
+    <div class="layout">
+      <div class="gallery">
+        <PieceImage
+          name={d.images[0]}
+          alt={title}
+          ratio="4 / 5"
+          eager
+          sizes="(max-width: 900px) 100vw, 580px"
+          widths={[480, 720, 1080, 1440]}
+        />
+        {
+          d.images.length > 1 && (
+            <div class="gallery__rest">
+              {d.images.slice(1, 5).map((name) => (
+                <PieceImage
+                  name={name}
+                  alt={title}
+                  ratio="1 / 1"
+                  sizes="(max-width: 900px) 48vw, 280px"
+                  widths={[320, 560, 720]}
+                />
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <div class="info">
+        <div class="tags">
+          <span class:list={['tag', d.kind === 'unique' ? 'tag--unique' : 'tag--batch']}>
+            {d.kind === 'unique' ? t('piece.unique') : t('piece.batch')}
+          </span>
+          <span
+            class:list={[
+              'tag',
+              d.status === 'sold' ? 'tag--sold' : d.status === 'made-to-order' ? 'tag--mto' : 'tag--batch',
+            ]}
+          >
+            {statusLabel}
+          </span>
+        </div>
+
+        <h1>{primary}</h1>
+        {
+          secondary && (
+            <p class:list={['alt-name', { 'alt-name--latin': secondaryIsLatin }]}>{secondary}</p>
+          )
+        }
+
+        {price && <p class="price">{price}</p>}
+        {!price && <p class="price price--ask">{lang === 'zh' ? '价格请询问' : 'Price on enquiry'}</p>}
+
+        {description && <p class="desc">{description}</p>}
+
+        {isSold && <p class="note">{t('piece.soldNote')}</p>}
+
+        <div class="actions">
+          {
+            hasWhatsApp ? (
+              <a class="btn btn--wa" href={waLink(enquiryText)} rel="noopener" target="_blank">
+                {ctaLabel}
+              </a>
+            ) : (
+              <a class="btn btn--primary" href={SITE.instagram} rel="noopener" target="_blank">
+                {ctaLabel}
+              </a>
+            )
+          }
+          {
+            hasWhatsApp && (
+              <a class="dm" href={SITE.instagram} rel="noopener" target="_blank">
+                {t('piece.enquireDm')}
+              </a>
+            )
+          }
+        </div>
+
+        {
+          (dimensions || care) && (
+            <dl class="specs">
+              {dimensions && (
+                <>
+                  <dt>{t('piece.dimensions')}</dt>
+                  <dd>{dimensions}</dd>
+                </>
+              )}
+              {care && (
+                <>
+                  <dt>{t('piece.care')}</dt>
+                  <dd>{care}</dd>
+                </>
+              )}
+            </dl>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</article>
+
+{
+  related.length > 0 && (
+    <section class="section section--tight related">
+      <div class="wrap">
+        <h2>{t('piece.related')}</h2>
+        <ul class="grid">
+          {related.map((x) => (
+            <PieceCard piece={x} lang={lang} />
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .back {
+    display: inline-block;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+  }
+  .back:hover { color: var(--clay-deep); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .gallery { display: flex; flex-direction: column; gap: 0.9rem; }
+
+  .gallery__rest {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+
+  .info { position: sticky; top: 96px; }
+
+  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  .info h1 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin-bottom: 0.12em; }
+
+  .alt-name {
+    margin: 0 0 1.1rem;
+    color: var(--ink-faint);
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .alt-name--latin {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+
+  .price {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 0 0 1.25rem;
+  }
+  .price--ask { font-size: 1.05rem; color: var(--ink-soft); font-weight: 500; }
+
+  .desc { color: var(--ink-soft); max-width: 46ch; }
+
+  .note {
+    background: var(--paper-2);
+    border-left: 3px solid var(--clay);
+    padding: 0.9rem 1.1rem;
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    color: var(--ink-soft);
+    font-size: 0.94rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 1.75rem 0;
+  }
+
+  .dm { font-size: 0.88rem; color: var(--ink-soft); }
+
+  .specs {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.92rem;
+  }
+
+  .specs dt {
+    font-weight: 600;
+    color: var(--ink-faint);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 0.2em;
+  }
+
+  .specs dd { margin: 0; color: var(--ink-soft); }
+
+  .related { border-top: 1px solid var(--line); margin-top: clamp(2rem, 6vw, 4rem); }
+  .related h2 { font-size: clamp(1.3rem, 2.4vw, 1.7rem); margin-bottom: 1.5rem; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .info { position: static; }
+  }
+</style>

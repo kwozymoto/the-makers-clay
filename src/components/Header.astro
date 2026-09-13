@@ -1,0 +1,129 @@
+---
+import Wordmark from './Wordmark.astro';
+import { SITE } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  altHref: string;
+}
+
+const { lang, altHref } = Astro.props;
+const t = useTranslations(lang);
+const p = (path: string) => localePath(lang, path);
+const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: p('/shop'), label: t('nav.shop') },
+  { href: p('/custom'), label: t('nav.custom') },
+  { href: p('/about'), label: t('nav.about') },
+];
+
+const isCurrent = (href: string) => {
+  const clean = href.replace(/\/$/, '') || '/';
+  return here === clean || here.startsWith(clean + '/');
+};
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={p('/')} aria-label="The Makers Clay">
+      <Wordmark size="sm" />
+    </a>
+
+    <nav class="nav" aria-label={lang === 'zh' ? '主导航' : 'Main'}>
+      {
+        links.map((l) => (
+          <a href={l.href} class:list={['nav__link', { 'is-current': isCurrent(l.href) }]}>
+            {l.label}
+          </a>
+        ))
+      }
+      <a class="nav__link nav__link--ext" href={SITE.instagram} rel="me noopener" target="_blank">
+        {t('nav.instagram')}
+      </a>
+      <a class="lang" href={altHref} hreflang={lang === 'en' ? 'zh-Hans' : 'en'}>
+        {lang === 'en' ? '中文' : 'EN'}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 68px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--ink);
+    padding-block: 0.35rem;
+    transition: color 0.15s ease;
+  }
+
+  .brand:hover { color: var(--clay-deep); }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2.2vw, 1.6rem);
+    flex-wrap: wrap;
+  }
+
+  .nav__link {
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ink-soft);
+    padding: 0.25rem 0;
+    border-bottom: 1.5px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .nav__link:hover { color: var(--ink); border-color: var(--clay-soft); }
+  .nav__link.is-current { color: var(--ink); border-color: var(--clay); }
+  .nav__link--ext { color: var(--ink-faint); }
+
+  .lang {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--ink-soft);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .lang:hover { border-color: var(--clay); color: var(--clay-deep); }
+
+  /* Two rows on a phone, so keep the sticky bar as short as it can be. */
+  @media (max-width: 520px) {
+    .bar {
+      min-height: 0;
+      padding-block: 0.5rem;
+      gap: 0.35rem;
+    }
+    .brand { padding-block: 0.15rem; }
+    .nav { gap: 0.8rem; width: 100%; }
+    .nav__link { font-size: 0.84rem; }
+    .lang { font-size: 0.74rem; padding: 0.2rem 0.55rem; }
+  }
+</style>

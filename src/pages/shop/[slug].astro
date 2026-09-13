@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import PieceDetail from '../../views/PieceDetail.astro';
+import { allPieces } from '../../lib/pieces';
+import { pick } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  const pieces = await allPieces();
+  return pieces.map((piece) => ({ params: { slug: piece.id }, props: { piece } }));
+}
+
+const lang = 'en' as const;
+const { piece } = Astro.props;
+const title = pick(lang, piece.data.title, piece.data.titleZh);
+const description = pick(lang, piece.data.description, piece.data.descriptionZh) ?? '';
+---
+
+<Base lang={lang} title={title} description={description}>
+  <PieceDetail piece={piece} lang={lang} />
+</Base>

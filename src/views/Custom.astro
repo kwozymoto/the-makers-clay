@@ -1,0 +1,121 @@
+---
+import Waitlist from '../components/Waitlist.astro';
+import { SITE, waLink } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const hasWhatsApp = !/^6?0+$/.test(SITE.whatsapp.replace(/\D/g, ''));
+const opener =
+  lang === 'zh'
+    ? '你好!我想订制一件作品,大概是这样的:'
+    : "Hi! I'd like to ask about a custom piece. Here's roughly what I have in mind:";
+
+const steps = [
+  { n: '01', t: t('custom.step1.t'), b: t('custom.step1.b') },
+  { n: '02', t: t('custom.step2.t'), b: t('custom.step2.b') },
+  { n: '03', t: t('custom.step3.t'), b: t('custom.step3.b') },
+  { n: '04', t: t('custom.step4.t'), b: t('custom.step4.b') },
+];
+---
+
+<section class="section section--tight">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow">{t('custom.title')}</p>
+    <h1>{lang === 'zh' ? '订制作品' : 'Something made for you'}</h1>
+    <p class="lede">{t('custom.lede')}</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="wrap">
+    <h2 class="steps__head">{t('custom.how')}</h2>
+    <ol class="steps">
+      {
+        steps.map((s) => (
+          <li class="step">
+            <span class="step__n" aria-hidden="true">
+              {s.n}
+            </span>
+            <h3>{s.t}</h3>
+            <p class="muted">{s.b}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="cta">
+      {
+        hasWhatsApp ? (
+          <a class="btn btn--wa" href={waLink(opener)} rel="noopener" target="_blank">
+            {t('custom.cta')}
+          </a>
+        ) : (
+          <a class="btn btn--primary" href={SITE.instagram} rel="noopener" target="_blank">
+            {t('custom.cta')}
+          </a>
+        )
+      }
+      {
+        hasWhatsApp && (
+          <a class="btn btn--ghost" href={SITE.instagram} rel="noopener" target="_blank">
+            {SITE.instagramHandle}
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<Waitlist lang={lang} />
+
+<style>
+  h1 { margin-bottom: 0.35em; }
+
+  .steps__head {
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  .step {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 1.5rem 1.4rem;
+  }
+
+  .step__n {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-variation-settings: 'SOFT' 40, 'WONK' 1;
+    color: var(--clay);
+    margin-bottom: 0.6rem;
+  }
+
+  .step h3 { font-size: 1.05rem; margin-bottom: 0.4em; }
+  .step p { margin: 0; font-size: 0.93rem; }
+
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>

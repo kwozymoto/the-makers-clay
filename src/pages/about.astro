@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import About from '../views/About.astro';
+import { useTranslations } from '../i18n/utils';
+const lang = 'en' as const;
+const t = useTranslations(lang);
+---
+
+<Base
+  lang={lang}
+  title={t('about.title')}
+  description="A small pottery studio in Malaysia making hand-thrown, hand-painted tableware in small batches."
+>
+  <About lang={lang} />
+</Base>

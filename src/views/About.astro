@@ -1,0 +1,123 @@
+---
+import Waitlist from '../components/Waitlist.astro';
+import PieceImage from '../components/PieceImage.astro';
+import { SITE } from '../config';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (path: string) => localePath(lang, path);
+
+/* Swap these for photos of you and the studio — drop files in src/assets/pieces/. */
+const portrait = 'studio-2.jpg';
+const studioStrip = ['studio-3.jpg', 'studio-1.jpg', 'cat-friends-2.jpg'];
+
+/* TODO — swap this for the real story. Keep it short and in your own voice;
+   this is the page people read before deciding to buy from a stranger. */
+const body = {
+  en: [
+    'The Makers Clay is a small pottery studio in Malaysia. Everything here is made by hand — thrown on the wheel or built by hand, then painted, glazed and fired in small batches.',
+    'I make tableware for actual use rather than for a shelf. Mugs that fit the hand properly, plates that take a knife, little dishes for the things that end up on the counter anyway. Some pieces get a face, a cat, or a small scene painted on them, because it makes people smile when they open the cupboard.',
+    'Because batches are small, some pieces are one-of-a-kind and will not come back. Others are ones I make again and again, though never quite identically — glaze moves, the kiln has its own opinion, and each firing turns out a little different.',
+    'If something here looks like it belongs in your kitchen, or you have an idea for a piece of your own, send a message. I would like to hear about it.',
+  ],
+  zh: [
+    '手作陶 The Makers Clay 是一间位于马来西亚的小陶艺工作室。这里的每一件都是手工完成的 —— 拉坯或手捏成形,然后手绘、上釉,小批量烧制。',
+    '我做的是拿来用的器皿,不是摆在架子上看的。握起来刚刚好的杯子、可以用刀叉的碟子、装那些反正会放在台面上的小东西的小碟。有些作品上会画上一张脸、一只猫,或是一个小场景,因为打开橱柜看到的时候会让人笑一下。',
+    '因为每批数量都很少,有些作品是独一无二的,售出之后就不会再有。有些则是我会反覆做的款式,但也从来不会完全一样 —— 釉会流动,窑有自己的脾气,每一次烧出来都有一点不同。',
+    '如果这里有什么看起来适合你的厨房,或者你心里有一个想做的东西,跟我说一声。我很想听听看。',
+  ],
+} as const;
+
+const paragraphs = body[lang];
+---
+
+<section class="section section--tight">
+  <div class="wrap layout">
+    <div class="copy">
+      <p class="eyebrow">{t('about.title')}</p>
+      <h1>{lang === 'zh' ? '关于工作室' : 'About the studio'}</h1>
+      <div class="prose">
+        {paragraphs.map((text) => <p>{text}</p>)}
+      </div>
+      <div class="cta">
+        <a class="btn btn--primary" href={p('/shop')}>{t('nav.shop')}</a>
+        <a class="btn btn--ghost" href={SITE.instagram} rel="me noopener" target="_blank">
+          {SITE.instagramHandle}
+        </a>
+      </div>
+    </div>
+
+    <div class="portrait">
+      <PieceImage
+        name={portrait}
+        alt={lang === 'zh' ? '工作室一角' : 'The studio'}
+        ratio="4 / 5"
+        sizes="(max-width: 900px) 100vw, 420px"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight strip-section">
+  <div class="wrap">
+    <p class="eyebrow">{lang === 'zh' ? '工作室日常' : 'From the studio'}</p>
+    <div class="strip">
+      {
+        studioStrip.map((name) => (
+          <PieceImage
+            name={name}
+            alt={lang === 'zh' ? '工作室日常' : 'From the studio'}
+            ratio="1 / 1"
+            sizes="(max-width: 700px) 45vw, 340px"
+            widths={[320, 560, 720]}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<Waitlist lang={lang} />
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  h1 { margin-bottom: 0.6em; }
+
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .portrait {
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-md);
+    rotate: 1.5deg;
+  }
+
+  .strip-section { border-top: 1px solid var(--line); }
+
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .portrait { order: -1; max-width: 420px; rotate: 0deg; }
+  }
+</style>

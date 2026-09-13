@@ -1,0 +1,193 @@
+---
+import PieceCard from '../components/PieceCard.astro';
+import PieceImage from '../components/PieceImage.astro';
+import Waitlist from '../components/Waitlist.astro';
+import { allPieces } from '../lib/pieces';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (path: string) => localePath(lang, path);
+
+const pieces = await allPieces();
+const featured = pieces.filter((x) => x.data.featured);
+const latest = (featured.length >= 3 ? featured : pieces).slice(0, 3);
+const heroImages = pieces.flatMap((x) => x.data.images.slice(0, 1)).slice(0, 3);
+---
+
+<section class="hero">
+  <div class="wrap hero__inner">
+    <div class="hero__copy">
+      <p class="eyebrow">{t('home.eyebrow')}</p>
+      <h1>{lang === 'zh' ? '为日常而做,值得被爱。' : 'Made to be used & loved.'}</h1>
+      <p class="lede">{t('home.lede')}</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href={p('/shop')}>{t('home.cta.shop')}</a>
+        <a class="btn btn--ghost" href={p('/custom')}>{t('home.cta.custom')}</a>
+      </div>
+    </div>
+
+    <div class="hero__art" aria-hidden={heroImages.length === 0}>
+      <div class="hero__art-a">
+        <PieceImage name={heroImages[0]} alt="" ratio="4 / 5" eager sizes="(max-width: 900px) 60vw, 340px" />
+      </div>
+      <div class="hero__art-b">
+        <PieceImage name={heroImages[1]} alt="" ratio="1 / 1" sizes="(max-width: 900px) 40vw, 220px" />
+      </div>
+      <div class="hero__art-c">
+        <PieceImage name={heroImages[2]} alt="" ratio="1 / 1" sizes="(max-width: 900px) 30vw, 160px" />
+      </div>
+    </div>
+  </div>
+</section>
+
+{
+  latest.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <h2>{t('home.latest')}</h2>
+            <p class="muted">{t('home.latest.sub')}</p>
+          </div>
+          <a class="btn btn--ghost" href={p('/shop')}>
+            {t('home.viewAll')}
+          </a>
+        </div>
+        <ul class="grid">
+          {latest.map((piece, i) => (
+            <PieceCard piece={piece} lang={lang} eager={i < 2} />
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<section class="section story">
+  <div class="wrap story__inner">
+    <div class="story__copy">
+      <h2>{t('home.story.title')}</h2>
+      <p class="muted">{t('home.story.body')}</p>
+      <a class="btn btn--ghost" href={p('/about')}>{t('home.story.link')}</a>
+    </div>
+    <div class="story__marks" aria-hidden="true">
+      <span class="blob blob--clay"></span>
+      <span class="blob blob--sage"></span>
+      <span class="blob blob--blue"></span>
+    </div>
+  </div>
+</section>
+
+<Waitlist lang={lang} />
+
+<style>
+  .hero {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2rem, 5vw, 4rem);
+    background:
+      radial-gradient(70% 60% at 85% 10%, var(--clay-soft) 0%, transparent 60%),
+      radial-gradient(60% 50% at 5% 90%, var(--sage-soft) 0%, transparent 65%);
+  }
+
+  .hero__inner {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .hero__copy h1 { margin-bottom: 0.35em; }
+  .hero__cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .hero__art {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0.9rem;
+  }
+
+  .hero__art-a {
+    grid-column: 1 / 5;
+    grid-row: 1 / 3;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--r-md);
+    rotate: -1.5deg;
+  }
+
+  .hero__art-b {
+    grid-column: 5 / 7;
+    grid-row: 1 / 2;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--r-md);
+    rotate: 2deg;
+  }
+
+  .hero__art-c {
+    grid-column: 5 / 7;
+    grid-row: 2 / 3;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--r-md);
+    rotate: -2.5deg;
+    align-self: start;
+  }
+
+  .head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .head h2 { margin-bottom: 0.2em; }
+  .head p { margin: 0; }
+
+  .story { background: var(--card); border-block: 1px solid var(--line); }
+
+  .story__inner {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .story__copy .btn { margin-top: 1.25rem; }
+
+  .story__marks {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .blob {
+    display: block;
+    border-radius: 50% 50% 46% 46%;
+    box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.07);
+  }
+
+  .blob--clay { width: 92px; height: 104px; background: var(--clay); opacity: 0.85; }
+  .blob--sage { width: 68px; height: 76px; background: var(--sage); opacity: 0.8; }
+  .blob--blue { width: 54px; height: 60px; background: var(--blue); opacity: 0.75; }
+
+  @media (max-width: 900px) {
+    .hero__inner,
+    .story__inner {
+      grid-template-columns: 1fr;
+    }
+    .hero__art { max-width: 520px; }
+    .story__marks { justify-content: flex-start; }
+  }
+</style>

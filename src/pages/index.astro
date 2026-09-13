@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import Home from '../views/Home.astro';
+const lang = 'en' as const;
+---
+
+<Base
+  lang={lang}
+  title=""
+  description="Handmade pottery from a small studio in Malaysia. Small batch tableware, made to be used and loved."
+>
+  <Home lang={lang} />
+</Base>

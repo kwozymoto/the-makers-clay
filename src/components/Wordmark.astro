@@ -1,0 +1,104 @@
+---
+/**
+ * The Makers Clay wordmark.
+ *
+ * Modelled on the studio's own mark (see the sticker in cloud-dish-1.jpg and
+ * the overlay in night-flower-1.jpg): lowercase marker hand, three lines
+ * cascading to the right, with "HANDBUILT BY LYDIA" tracked out underneath.
+ *
+ * Shantell Sans is a stand-in for the real lettering. If there is an original
+ * logo file, drop it in and replace this component — the shape and rhythm
+ * here are set up to match it.
+ */
+interface Props {
+  size?: 'sm' | 'lg';
+  /** Show the "HANDBUILT BY LYDIA" line underneath. */
+  byline?: boolean;
+  /** Rendered as a heading on the footer, plain text in the header link. */
+  as?: 'span' | 'p';
+}
+
+const { size = 'sm', byline = false, as: Tag = 'span' } = Astro.props;
+---
+
+<Tag class:list={['mark', `mark--${size}`]}>
+  <span class="visually-hidden">The Makers Clay</span>
+  <span class="mark__lines" aria-hidden="true">
+    <span class="mark__the">the</span>
+    <span class="mark__makers">makers</span>
+    <span class="mark__clay">clay</span>
+  </span>
+  {byline && <span class="mark__byline" aria-hidden="true">Handbuilt by Lydia</span>}
+</Tag>
+
+<style>
+  .mark {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5em;
+    font-family: 'Shantell Mark', 'Comic Sans MS', cursive;
+    color: inherit;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .mark__lines {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mark__the,
+  .mark__makers,
+  .mark__clay {
+    display: block;
+    white-space: nowrap;
+  }
+
+  /* Weight, bounce and informality tuned to the marker hand in her photos. */
+  .mark__the {
+    font-weight: 500;
+    font-variation-settings: 'BNCE' 20, 'INFM' 60;
+    transform: rotate(-3deg);
+    transform-origin: left bottom;
+  }
+
+  .mark__makers {
+    font-weight: 700;
+    font-variation-settings: 'BNCE' 45, 'INFM' 55;
+    letter-spacing: -0.01em;
+  }
+
+  .mark__clay {
+    font-weight: 600;
+    font-variation-settings: 'BNCE' 35, 'INFM' 65;
+  }
+
+  .mark__byline {
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-faint);
+    align-self: flex-end;
+  }
+
+  /* --- small: the sticky header --- */
+  .mark--sm { gap: 0.35em; }
+  .mark--sm .mark__lines { margin-top: -0.1em; }
+  .mark--sm .mark__the { font-size: 0.6rem; margin-left: 0.15em; margin-bottom: -0.12em; }
+  .mark--sm .mark__makers { font-size: 1.3rem; margin-left: -0.04em; }
+  .mark--sm .mark__clay { font-size: 0.86rem; margin-left: 1.5em; margin-top: -0.18em; }
+  .mark--sm .mark__byline { font-size: 0.5rem; letter-spacing: 0.2em; }
+
+  /* --- large: the footer --- */
+  .mark--lg .mark__the { font-size: 0.95rem; margin-left: 0.2em; margin-bottom: -0.1em; }
+  .mark--lg .mark__makers { font-size: 2.3rem; margin-left: -0.05em; }
+  .mark--lg .mark__clay { font-size: 1.5rem; margin-left: 1.6em; margin-top: -0.12em; }
+  .mark--lg .mark__byline { font-size: 0.62rem; letter-spacing: 0.26em; margin-top: 0.2em; }
+
+  @media (max-width: 520px) {
+    .mark--sm .mark__the { font-size: 0.53rem; }
+    .mark--sm .mark__makers { font-size: 1.08rem; }
+    .mark--sm .mark__clay { font-size: 0.72rem; margin-left: 1.3em; }
+  }
+</style>

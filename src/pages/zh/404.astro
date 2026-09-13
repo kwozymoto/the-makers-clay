@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import { useTranslations, localePath } from '../../i18n/utils';
+const lang = 'zh' as const;
+const t = useTranslations(lang);
+---
+
+<Base lang={lang} title={t('notfound.title')}>
+  <section class="section">
+    <div class="wrap wrap--narrow center">
+      <h1>{t('notfound.title')}</h1>
+      <p class="lede">{t('notfound.body')}</p>
+      <a class="btn btn--primary" href={localePath(lang, '/shop')}>{t('notfound.cta')}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .center { text-align: center; }
+  .center .lede { margin-inline: auto; margin-bottom: 2rem; }
+</style>

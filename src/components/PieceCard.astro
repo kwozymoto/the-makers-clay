@@ -1,0 +1,119 @@
+---
+import PieceImage from './PieceImage.astro';
+import { formatPrice, pairedTitle, type Piece } from '../lib/pieces';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localePath, pick } from '../i18n/utils';
+
+interface Props {
+  piece: Piece;
+  lang: Lang;
+  eager?: boolean;
+}
+
+const { piece, lang, eager = false } = Astro.props;
+const t = useTranslations(lang);
+const d = piece.data;
+
+const title = pick(lang, d.title, d.titleZh);
+const { primary, secondary, secondaryIsLatin } = pairedTitle(lang, d);
+const price = formatPrice(d.price, d.currency);
+const href = localePath(lang, '/shop/' + piece.id);
+
+const statusTag =
+  d.status === 'sold'
+    ? { cls: 'tag--sold', label: t('piece.sold') }
+    : d.status === 'made-to-order'
+      ? { cls: 'tag--mto', label: t('piece.madeToOrder') }
+      : null;
+
+const kindLabel = d.kind === 'unique' ? t('piece.unique') : t('piece.batch');
+---
+
+<li class="card" data-kind={d.kind} data-status={d.status}>
+  <a class="card__link" href={href}>
+    <div class="card__media">
+      <PieceImage name={d.images[0]} alt={title} eager={eager} />
+      {statusTag && <span class:list={['tag', statusTag.cls, 'card__status']}>{statusTag.label}</span>}
+    </div>
+
+    <div class="card__body">
+      <h3 class="card__title">{primary}</h3>
+      {
+        secondary && (
+          <p class:list={['card__alt', { 'card__alt--latin': secondaryIsLatin }]}>{secondary}</p>
+        )
+      }
+      <p class="card__meta">
+        <span class:list={['tag', d.kind === 'unique' ? 'tag--unique' : 'tag--batch']}>
+          {kindLabel}
+        </span>
+        {price && <span class="card__price">{price}</span>}
+      </p>
+    </div>
+  </a>
+</li>
+
+<style>
+  .card { list-style: none; }
+
+  .card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .card__media { position: relative; }
+
+  .card__link:hover :global(.frame img) { transform: scale(1.04); }
+
+  .card__status {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card__title {
+    font-size: 1.05rem;
+    margin: 0;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+
+  .card__alt {
+    margin: -0.15rem 0 0.1rem;
+    font-size: 0.86rem;
+    color: var(--ink-faint);
+    line-height: 1.35;
+  }
+
+  .card__alt--latin {
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+
+  .card__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  .card__price {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-left: auto;
+  }
+</style>
