@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://themakersclay.pages.dev/sitemap-index.xml

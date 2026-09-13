@@ -3,6 +3,7 @@ import '@fontsource-variable/fraunces/full.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import PreviewNotice from '../components/PreviewNotice.astro';
 import { SITE } from '../config';
 import type { Lang } from '../i18n/ui';
 import { altLangPath } from '../i18n/utils';
@@ -19,6 +20,9 @@ const htmlLang = lang === 'zh' ? 'zh-Hans' : 'en';
 const siteName = lang === 'zh' ? SITE.nameZh + ' The Makers Clay' : SITE.name;
 const fullTitle = title ? title + ' · ' + SITE.name : SITE.name;
 
+const baseUrl = import.meta.env.BASE_URL;
+const faviconHref = (baseUrl.endsWith('/') ? baseUrl : baseUrl + '/') + 'favicon.svg';
+
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const altPath = altLangPath(lang, Astro.url.pathname);
 const altHref = new URL(altPath, Astro.site ?? Astro.url.origin);
@@ -33,7 +37,8 @@ const zhHref = new URL(lang === 'zh' ? Astro.url.pathname : altPath, Astro.site 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     {description && <meta name="description" content={description} />}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
+    {SITE.preview && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" hreflang="en" href={enHref.href} />
     <link rel="alternate" hreflang="zh-Hans" href={zhHref.href} />
@@ -50,6 +55,7 @@ const zhHref = new URL(lang === 'zh' ? Astro.url.pathname : altPath, Astro.site 
   </head>
   <body lang={htmlLang}>
     <a class="skip" href="#main">Skip to content</a>
+    <PreviewNotice lang={lang} />
     <Header lang={lang} altHref={altHref.pathname} />
     <main id="main">
       <slot />

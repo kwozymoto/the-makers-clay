@@ -1,0 +1,73 @@
+---
+import { SITE } from '../config';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const copy = {
+  en: {
+    label: 'Preview',
+    body: 'Work in progress. Photos, prices and descriptions are placeholders — nothing here is for sale yet.',
+  },
+  zh: {
+    label: '预览',
+    body: '网站还在制作中。照片、价格与说明都是暂定的 —— 目前还没有开始销售。',
+  },
+} as const;
+
+const { label, body } = copy[lang];
+---
+
+{
+  SITE.preview && (
+    <aside class="notice" role="note">
+      <div class="wrap inner">
+        <span class="badge">{label}</span>
+        <p>{body}</p>
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .notice {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    flex: none;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--clay);
+    color: #fff;
+  }
+
+  [lang='zh'] .badge {
+    text-transform: none;
+    letter-spacing: 0.06em;
+  }
+
+  .inner p {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    opacity: 0.88;
+  }
+</style>

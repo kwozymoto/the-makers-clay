@@ -2,7 +2,7 @@
 import Wordmark from './Wordmark.astro';
 import { SITE } from '../config';
 import type { Lang } from '../i18n/ui';
-import { useTranslations, localePath } from '../i18n/utils';
+import { useTranslations, localePath, isActivePath } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -20,10 +20,7 @@ const links = [
   { href: p('/about'), label: t('nav.about') },
 ];
 
-const isCurrent = (href: string) => {
-  const clean = href.replace(/\/$/, '') || '/';
-  return here === clean || here.startsWith(clean + '/');
-};
+const isCurrent = (href: string) => isActivePath(href, here);
 ---
 
 <header class="site-header">

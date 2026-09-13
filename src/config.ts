@@ -20,6 +20,13 @@ export const SITE = {
 
   email: '',
   location: 'Malaysia',
+
+  /**
+   * While true the site shows a "work in progress" bar and asks search engines
+   * not to index it (noindex header + a robots.txt that disallows everything).
+   * Set to false when the real prices and photos are in and you want it found.
+   */
+  preview: true,
 } as const;
 
 /** Build a wa.me link with the message already typed out for the customer. */

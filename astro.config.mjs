@@ -2,10 +2,18 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+/*
+ * Where the site is served from is set at build time, so the same code works
+ * on GitHub Pages (a subpath like /the-makers-clay/) and on a real domain
+ * (the root). The GitHub Actions workflow sets both of these; locally and on
+ * Cloudflare Pages the defaults apply.
+ */
+const site = process.env.PUBLIC_SITE_URL || 'https://themakersclay.pages.dev';
+const base = process.env.PUBLIC_BASE_PATH || '/';
+
 export default defineConfig({
-  // TODO: change this to your real Cloudflare domain before deploying,
-  // then update the Sitemap line in public/robots.txt to match.
-  site: 'https://themakersclay.pages.dev',
+  site,
+  base,
 
   i18n: {
     defaultLocale: 'en',
