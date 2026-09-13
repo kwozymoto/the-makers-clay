@@ -25,12 +25,13 @@ Bookmark that page. Next time it's just sign in and go.
    so put the best one first. Upright photos look better than wide ones.
    Upload the full-size photo; the website shrinks it for you.
 3. **Name (English)** — short. This also becomes the web address.
-4. **中文名称** — optional. If you leave it empty, the English name is used in
-   both languages.
-5. **Price** — just the number. Leave it empty to show "Price on enquiry".
-6. **Is it available?** and **Is there only one?** — pick whichever fits.
-7. Fill in the description and size if you want. You can always come back.
-8. Click **Save**
+4. **Price** — just the number. Leave it empty to show "Price on enquiry".
+5. **Is it available?** and **Is there only one?** — pick whichever fits.
+6. Click **Save**. That's enough for a piece to go live.
+
+Description, size and care sit below that, and every Chinese field is grouped
+together at the bottom — so you can do the whole English pass first and decide
+about the Chinese one separately. Anything left blank falls back to English.
 
 The piece appears on the site about a minute later. See
 [When will I see my changes?](#when-will-i-see-my-changes) below.
@@ -102,6 +103,8 @@ background. There's no progress bar, so:
 - Wait a minute, then refresh the site.
 - If it still looks old, refresh again — your browser may be showing you a
   saved copy.
+- Still nothing after a few minutes? Click **Rebuild the site** in the sidebar
+  and give it another minute.
 
 ---
 
