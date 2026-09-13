@@ -189,4 +189,13 @@ content:
 
 settings:
   content:
+    # Merge submitted fields into the existing file rather than rewriting it
+    # from the schema above. Without this, saving a piece would drop any field
+    # the CMS does not know about — `currency`, for one.
     merge: true
+  commit:
+    templates:
+      create: 'Add {path} (via Pages CMS)'
+      update: 'Update {path} (via Pages CMS)'
+      delete: 'Delete {path} (via Pages CMS)'
+      rename: 'Rename {oldPath} to {newPath} (via Pages CMS)'
