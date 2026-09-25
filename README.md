@@ -7,7 +7,7 @@ WhatsApp and Instagram. Checkout is deliberately **not** built yet; see
 [Adding payments later](#adding-payments-later).
 
 - **Framework:** Astro 7 (static output)
-- **Hosting:** Cloudflare Pages (free tier is plenty)
+- **Hosting:** GitHub Pages for now; moving to Cloudflare (see [Moving to Cloudflare](#moving-to-cloudflare))
 - **Running cost:** just the domain
 
 ---
@@ -221,34 +221,48 @@ rewrites `/the-makers-clay` into a Windows path.)
 
 ---
 
-## Deploying to Cloudflare Pages
+## Moving to Cloudflare
 
-Push to GitHub first:
+**Not done yet.** The site should move off GitHub Pages so the repo can be made
+private. There are no secrets in the repo, but private keeps the business notes,
+drafts, price history and the copyable design to ourselves, and it limits the
+damage if a payment key is ever committed by mistake. Cloudflare's free tier
+covers it.
 
-```bash
-git init && git add -A && git commit -m "Initial site"
-```
+**Do not make the repo private before step 2.** A private repo takes the site
+offline on the free GitHub plan.
 
-Create the repo and push:
+`wrangler.jsonc` is already in place. It serves the built `dist/` folder, using
+the same setup as CounsellingTheHeart.
 
-```bash
-gh repo create the-makers-clay --private --source=. --push
-```
+1. **Import into Cloudflare** *(dashboard)*: Workers & Pages → Create → Import a
+   repository. Build command `npm run build`, deploy command `npx wrangler
+   deploy`. Set the `PUBLIC_SITE_URL` variable to the new URL and leave
+   `PUBLIC_BASE_PATH` unset so the site runs at the root. Add a custom domain if
+   there is one.
+2. **Check the new site**: home, shop, a piece page, the Chinese pages (`/zh/`),
+   a 404, and `/guide`.
+3. **Retire GitHub Pages** *(code, can be a PR)*:
+   - Remove the `actions:` rebuild button from `.pages.yml`, because Cloudflare
+     rebuilds on every commit.
+   - Remove the "Rebuild the site" advice from `docs/EDITING.md` and
+     `src/pages/guide.astro`.
+   - Delete `.github/workflows/deploy-pages.yml`.
+   - Change the `PUBLIC_SITE_URL` default in `astro.config.mjs` to the new URL.
+   - Update "Where it's deployed" above.
+4. **Turn off Pages** in the repo settings *(dashboard)*.
+5. **Make the repo private** *(dashboard)*. Then check that the Cloudflare and
+   Pages CMS GitHub apps can still see it. If either was installed for
+   "selected repositories only", add this repo to it.
+6. **Keep the old link working** *(code, in `kwozymoto/kwozymoto.github.io`)*:
+   add `the-makers-clay/index.html` (plus a `404.html` for deep links) that
+   redirects to the new site. Old links, from Instagram for example, keep
+   working.
+7. **Ownership**: if the studio should own this, move the repo to its own
+   GitHub organisation and Cloudflare account while making these changes.
 
-Then in the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to
-Git**, pick the repo, and use these build settings:
-
-| Field | Value |
-| --- | --- |
-| Framework preset | Astro |
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-
-Under **Custom domains**, add your domain. Because the domain is already on
-Cloudflare, the DNS record is created for you and SSL is automatic.
-
-Every push to `main` redeploys. That is the whole release process for a new batch:
-add the markdown files, add the photos, push.
+Once it's live, every push to `main` redeploys. That is the whole release
+process for a new batch: add the markdown files, add the photos, push.
 
 ---
 
